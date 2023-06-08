@@ -3,9 +3,10 @@ const mongoose = require('mongoose');
 const productSchema = new mongoose.Schema({
     name: String,
     imgUrl: String,
-    type: Array,
-    discription: String,
+    category: Array,
+    description: String,
     vote: Number,
+    link: String,
     comments: Array
 })
 
