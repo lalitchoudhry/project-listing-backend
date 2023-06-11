@@ -2,7 +2,7 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
-const cors = require('cors');
+// const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const mongoose = require('./config/database');
@@ -13,12 +13,12 @@ const User = require('./models/userModel');
 const Product = require('./models/productModel');
 
 app.use(express.json());
-app.use(cors({
-    origin: 'http://localhost:3000', // use your actual domain name (or localhost), using * is not recommended
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization', "Access-Control-Allow-Origin", "Access-Control-Allow-Methods", "Access-Control-Allow-Credentials", "Access-Control-Allow-Headers"],
-    credentials: true
-}));
+// app.use(cors({
+//     origin: 'http://localhost:3000', // use your actual domain name (or localhost), using * is not recommended
+//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
+//     allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization', "Access-Control-Allow-Origin", "Access-Control-Allow-Methods", "Access-Control-Allow-Credentials", "Access-Control-Allow-Headers"],
+//     credentials: true
+// }));
 
 // routes
 app.get('/', (req, res)=>{
