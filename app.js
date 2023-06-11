@@ -13,7 +13,12 @@ const User = require('./models/userModel');
 const Product = require('./models/productModel');
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000', // use your actual domain name (or localhost), using * is not recommended
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization', "Access-Control-Allow-Origin", "Access-Control-Allow-Methods", "Access-Control-Allow-Credentials", "Access-Control-Allow-Headers"],
+    credentials: true
+}));
 
 // routes
 app.get('/', (req, res)=>{
@@ -21,9 +26,21 @@ app.get('/', (req, res)=>{
 })
 
 // get products route
-app.get('/api/products', async(req, res, next)=>{
+app.get('/api/product', async(req, res, next)=>{
     try {
-        const products = await Product.find().collation({ locale: "en" }).sort();
+        let filter = req.query;
+        let sort = req.query.sort && JSON.parse(req.query.sort);
+        if (req.query.category) {
+            let category = {$in: req.query.category};
+            filter.category = category;
+        }
+        for (const key in filter) {
+            if (filter[key] === '' || key === 'sort') {
+                delete filter[key];
+            }
+        }
+        console.log(filter)
+        const products = await Product.find(filter).collation({ locale: "en" }).sort(sort);
         res.send(products);
     } catch (error) {
         next(error);
@@ -34,18 +51,18 @@ app.get('/api/products', async(req, res, next)=>{
 app.post('/api/register', async(req, res, next)=>{
     try {
         const {name, email, mobile, password} = req.body;
-
+        console.log(req.body)
         if (!(name && email && mobile && password)) {
             return res.status(400).send("All input is required");
         }
 
         const oldUser = await User.findOne({ email });
         if (oldUser) {
+            console.log('409')
             return res.status(409).send("User Already Exist. Please Login");
         }
-
+        console.log('again')
         const encryptedPassword = await bcrypt.hash(password, 10);
-
         const user = await User.create({
             name: name,
             email: email.toLowerCase(),
@@ -63,6 +80,7 @@ app.post('/api/register', async(req, res, next)=>{
 // login user
 app.post('/api/login', async(req, res, next)=>{
     try {
+        console.log(req.body)
         const {email, password} = req.body;
         if (!(email && password)) {
             return res.status(400).json('All input is required')
@@ -87,17 +105,22 @@ app.post('/api/login', async(req, res, next)=>{
 })
 
 // post project route
-app.post('/api/products', auth, async(req, res, next)=>{
+app.post('/api/product', auth, async(req, res, next)=>{
     try {
+        console.log(req.body)
         const {name, category, imgUrl, link, description} = req.body;
         if (!(name, category, imgUrl, link, description)) {
             return res.status(400).json("All Input Is Required")
         }
+        console.log(category);
+
+        const categoryArray = category.split(',');
+        console.log(categoryArray);
 
         const product = await Product.create({
             name: name,
             imgUrl: imgUrl,
-            category: category,
+            category: categoryArray,
             description: description,
             vote: 0,
             link: link,
@@ -112,10 +135,22 @@ app.post('/api/products', auth, async(req, res, next)=>{
 })
 
 // edit project
-app.put('/api/products/:id', auth, async(req, res, next)=>{
+app.put('/api/product/:id', async(req, res, next)=>{
     try {
+        console.log(req.params, req.body)
         const {id} = req.params;
-        const product = await Product.findByIdAndUpdate(id, req.body);
+        let body = req.body;
+        if (req.body.comments) {
+            let comments = {comments: req.body.comments};
+            body.$push = comments;
+        }
+        for (const key in body) {
+            if (body[key] === '' || key === 'comments') {
+                delete body[key];
+            }
+        }
+        console.log(body)
+        const product = await Product.findByIdAndUpdate(id, body);
         if (!product) {
             return res.status(404).json("Cannot find any product1")
         }
