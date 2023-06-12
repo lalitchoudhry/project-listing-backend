@@ -34,7 +34,6 @@ app.get('/api/product', async(req, res, next)=>{
                 delete filter[key];
             }
         }
-        console.log(filter)
         const products = await Product.find(filter).collation({ locale: "en" }).sort(sort);
         res.send(products);
     } catch (error) {
@@ -119,7 +118,8 @@ app.post('/api/product', auth, async(req, res, next)=>{
             description: description,
             vote: 0,
             link: link,
-            comments: []
+            comments: [],
+            commentLength: 0
         })
         res.status(201).json({message: 'successfuly added', product});
 
@@ -132,7 +132,6 @@ app.post('/api/product', auth, async(req, res, next)=>{
 // edit project
 app.put('/api/product/:id', async(req, res, next)=>{
     try {
-        console.log(req.params, req.body)
         const {id} = req.params;
         let body = req.body;
         if (req.body.comments) {
@@ -144,7 +143,6 @@ app.put('/api/product/:id', async(req, res, next)=>{
                 delete body[key];
             }
         }
-        console.log(body)
         const product = await Product.findByIdAndUpdate(id, body);
         if (!product) {
             return res.status(404).json("Cannot find any product1")

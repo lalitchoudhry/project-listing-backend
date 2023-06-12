@@ -7,7 +7,8 @@ const productSchema = new mongoose.Schema({
     description: String,
     vote: Number,
     link: String,
-    comments: Array
+    comments: Array,
+    commentLength: Number
 })
 
 module.exports = mongoose.model('products', productSchema);
