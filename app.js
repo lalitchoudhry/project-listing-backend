@@ -136,7 +136,7 @@ app.put('/api/product/:id', async(req, res, next)=>{
         const {id} = req.params;
         let body = req.body;
         if (req.body.comments) {
-            let comments = {comments: {$each: req.body.comments, $position: 0}};
+            let comments = {comments: {$each: [req.body.comments], $position: 0}};
             body.$push = comments;
         }
         for (const key in body) {
