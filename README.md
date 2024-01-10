@@ -11,6 +11,8 @@ This is Fullstack app where I used Reactjs as frontend and for backend I used No
 - Sign up / Sign in
 - Authorization
 - Filters
+- Post Product
+- Update Product
 - Responsive
 
 
@@ -21,7 +23,47 @@ This is Fullstack app where I used Reactjs as frontend and for backend I used No
 **Server:** Node, Express, MongoDB
 
 
-## Authors
+## API Reference
 
-- [@lalitchoudhry](https://www.github.com/lalitchoudhry)
+### Server
+```http
+project-listing-backend.vercel.app
+```
+
+#### Get all items
+
+```http
+  GET /api/product
+```
+
+#### Get item
+
+```http
+  GET /api/items/${id}
+```
+#### Post item
+
+```http
+  POST /api/item
+```
+#### Update item
+
+```http
+  PUT /api/item/${id}
+```
+
+### User Authentication
+#### Register User
+
+```http
+  POST /api/register
+```
+#### Login User
+
+```http
+  POST /api/login
+```
+## Author
+
+[@lalitchoudhry](https://www.github.com/lalitchoudhry)
 
